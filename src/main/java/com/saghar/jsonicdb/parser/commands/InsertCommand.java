@@ -20,16 +20,16 @@ public final class InsertCommand implements Command {
     @Override
     public String execute(Database db) {
         DataType dt = db.getType(typeName);
-        if (dt == null) throw new JsonicException("Data type not found: " + typeName);
-        if (!(payload instanceof JsonObject obj)) throw new JsonicException("Invalid insert syntax: expected JSON object");
+        if (dt == null) throw new JsonicException(com.saghar.jsonicdb.util.Errors.typeNotFound(typeName));
+        if (!(payload instanceof JsonObject obj)) throw new JsonicException(com.saghar.jsonicdb.util.Errors.invalidSyntax("insert"));
 
         Map<String, Object> values = new HashMap<>();
         for (Map.Entry<String, JsonValue> e : obj.entries().entrySet()) {
             String fieldKey = e.getKey().toLowerCase();
             FieldDef def = dt.field(fieldKey);
-            if (def == null) throw new JsonicException("Field not found: " + e.getKey());
+            if (def == null) throw new JsonicException(com.saghar.jsonicdb.util.Errors.fieldNotFound(e.getKey()));
 
-            Object converted = convertJsonToTyped(def.type(), e.getValue());
+            Object converted = convertJsonToTyped(def, e.getValue());
             values.put(fieldKey, converted);
         }
 
@@ -37,48 +37,48 @@ public final class InsertCommand implements Command {
         return "Instance inserted into '" + dt.name() + "'.";
     }
 
-    private static Object convertJsonToTyped(ValueType type, JsonValue v) {
+    private static Object convertJsonToTyped(FieldDef def, JsonValue v) {
+        ValueType type = def.type();
         return switch (type) {
             case STRING -> {
                 if (v instanceof JsonString s) yield s.value();
-                throw new JsonicException("Invalid string value");
+                throw new JsonicException(com.saghar.jsonicdb.util.Errors.invalidValueForField(def.name()));
             }
             case INT -> {
                 if (v instanceof JsonNumber n) {
                     try { yield Integer.parseInt(n.raw()); }
-                    catch (NumberFormatException ex) { throw new JsonicException("Invalid int value"); }
+                    catch (NumberFormatException ex) { throw new JsonicException(com.saghar.jsonicdb.util.Errors.invalidValueForField(def.name())); }
                 }
-                throw new JsonicException("Invalid int value");
+                throw new JsonicException(com.saghar.jsonicdb.util.Errors.invalidValueForField(def.name()));
             }
             case DOUBLE -> {
                 if (v instanceof JsonNumber n) {
                     try { yield Double.parseDouble(n.raw()); }
-                    catch (NumberFormatException ex) { throw new JsonicException("Invalid double value"); }
+                    catch (NumberFormatException ex) { throw new JsonicException(com.saghar.jsonicdb.util.Errors.invalidValueForField(def.name())); }
                 }
-                throw new JsonicException("Invalid double value");
+                throw new JsonicException(com.saghar.jsonicdb.util.Errors.invalidValueForField(def.name()));
             }
             case BOOL -> {
                 if (v instanceof JsonBoolean b) yield b.value();
-                throw new JsonicException("Invalid boolean value");
+                throw new JsonicException(com.saghar.jsonicdb.util.Errors.invalidValueForField(def.name()));
             }
             case TIME -> {
                 if (v instanceof JsonString s) {
                     try { yield LocalDateTime.parse(s.value()); }
-                    catch (Exception ex) { throw new JsonicException("Invalid time format. Use ISO_LOCAL_DATE_TIME"); }
+                    catch (Exception ex) { throw new JsonicException(com.saghar.jsonicdb.util.Errors.invalidValueForField(def.name())); }
                 }
-                // allow bare number as epoch seconds? no
-                throw new JsonicException("Invalid time value");
+                throw new JsonicException(com.saghar.jsonicdb.util.Errors.invalidValueForField(def.name()));
             }
             case STRING_LIST -> {
                 if (v instanceof JsonArray arr) {
                     List<String> out = new ArrayList<>();
                     for (JsonValue item : arr.items()) {
-                        if (!(item instanceof JsonString s)) throw new JsonicException("Invalid string_list item");
+                        if (!(item instanceof JsonString s)) throw new JsonicException(com.saghar.jsonicdb.util.Errors.invalidValueForField(def.name()));
                         out.add(s.value());
                     }
                     yield List.copyOf(out);
                 }
-                throw new JsonicException("Invalid string_list value");
+                throw new JsonicException(com.saghar.jsonicdb.util.Errors.invalidValueForField(def.name()));
             }
         };
     }

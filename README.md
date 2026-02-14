@@ -1,3 +1,5 @@
+![CI](https://github.com/<USER>/<REPO>/actions/workflows/ci.yml/badge.svg)
+
 # JsonicDB (In-memory Mini Database)
 
 A clean, modular re-implementation of the original **Jsonic** project: an in-memory database with a small DSL supporting:

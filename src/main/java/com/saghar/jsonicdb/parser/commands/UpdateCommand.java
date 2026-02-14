@@ -24,8 +24,8 @@ public final class UpdateCommand implements Command {
     @Override
     public String execute(Database db) {
         DataType dt = db.getType(typeName);
-        if (dt == null) throw new JsonicException("Data type not found: " + typeName);
-        if (!(payload instanceof JsonObject obj)) throw new JsonicException("Invalid update syntax: expected JSON object");
+        if (dt == null) throw new JsonicException(com.saghar.jsonicdb.util.Errors.typeNotFound(typeName));
+        if (!(payload instanceof JsonObject obj)) throw new JsonicException(com.saghar.jsonicdb.util.Errors.invalidSyntax("update"));
 
         Map<String, Object> updates = new HashMap<>();
         for (Map.Entry<String, JsonValue> e : obj.entries().entrySet()) {
@@ -44,32 +44,32 @@ public final class UpdateCommand implements Command {
         return switch (type) {
             case STRING -> {
                 if (v instanceof JsonString s) yield s.value();
-                throw new JsonicException("Invalid string value");
+                throw new JsonicException(com.saghar.jsonicdb.util.Errors.invalidValueForField("<unknown>"));
             }
             case INT -> {
                 if (v instanceof JsonNumber n) {
                     try { yield Integer.parseInt(n.raw()); }
-                    catch (NumberFormatException ex) { throw new JsonicException("Invalid int value"); }
+                    catch (NumberFormatException ex) { throw new JsonicException(com.saghar.jsonicdb.util.Errors.invalidValueForField("<unknown>")); }
                 }
-                throw new JsonicException("Invalid int value");
+                throw new JsonicException(com.saghar.jsonicdb.util.Errors.invalidValueForField("<unknown>"));
             }
             case DOUBLE -> {
                 if (v instanceof JsonNumber n) {
                     try { yield Double.parseDouble(n.raw()); }
-                    catch (NumberFormatException ex) { throw new JsonicException("Invalid double value"); }
+                    catch (NumberFormatException ex) { throw new JsonicException(com.saghar.jsonicdb.util.Errors.invalidValueForField("<unknown>")); }
                 }
-                throw new JsonicException("Invalid double value");
+                throw new JsonicException(com.saghar.jsonicdb.util.Errors.invalidValueForField("<unknown>"));
             }
             case BOOL -> {
                 if (v instanceof JsonBoolean b) yield b.value();
-                throw new JsonicException("Invalid boolean value");
+                throw new JsonicException(com.saghar.jsonicdb.util.Errors.invalidValueForField("<unknown>"));
             }
             case TIME -> {
                 if (v instanceof JsonString s) {
                     try { yield LocalDateTime.parse(s.value()); }
                     catch (Exception ex) { throw new JsonicException("Invalid time format. Use ISO_LOCAL_DATE_TIME"); }
                 }
-                throw new JsonicException("Invalid time value");
+                throw new JsonicException(com.saghar.jsonicdb.util.Errors.invalidValueForField("<unknown>"));
             }
             case STRING_LIST -> {
                 if (v instanceof JsonArray arr) {
@@ -80,7 +80,7 @@ public final class UpdateCommand implements Command {
                     }
                     yield List.copyOf(out);
                 }
-                throw new JsonicException("Invalid string_list value");
+                throw new JsonicException(com.saghar.jsonicdb.util.Errors.invalidValueForField("<unknown>"));
             }
         };
     }

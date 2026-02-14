@@ -28,7 +28,7 @@ public final class DataType {
 
     public void addField(FieldDef def) {
         String key = canon(def.name());
-        if (fields.containsKey(key)) throw new JsonicException("Field already exists: " + def.name());
+        if (fields.containsKey(key)) throw new JsonicException(com.saghar.jsonicdb.util.Errors.duplicateField(def.name()));
         fields.put(key, def);
         if (def.unique()) uniqueIndex.put(key, new HashMap<>());
     }
@@ -47,7 +47,7 @@ public final class DataType {
         for (FieldDef f : fields.values()) {
             if (f.required()) {
                 Object v = r.get(canon(f.name()));
-                if (v == null) throw new JsonicException("Missing required field: " + f.name());
+                if (v == null) throw new JsonicException(com.saghar.jsonicdb.util.Errors.missingRequired(f.name()));
             }
         }
 
@@ -57,7 +57,7 @@ public final class DataType {
             String k = canon(f.name());
             Object v = r.get(k);
             Map<Object, DataRecord> idx = uniqueIndex.get(k);
-            if (idx.containsKey(v)) throw new JsonicException("Duplicate value for unique field: " + f.name());
+            if (idx.containsKey(v)) throw new JsonicException(com.saghar.jsonicdb.util.Errors.duplicateUnique(f.name()));
         }
 
         // commit: add to records + index
@@ -86,7 +86,7 @@ public final class DataType {
     public int updateWhere(java.util.function.Predicate<DataRecord> predicate, Map<String, Object> updates) {
         // pre-validate: unknown fields
         for (String k : updates.keySet()) {
-            if (!fields.containsKey(canon(k))) throw new JsonicException("Unknown field: " + k);
+            if (!fields.containsKey(canon(k))) throw new JsonicException(com.saghar.jsonicdb.util.Errors.fieldNotFound(k));
         }
 
         // if updates touch a unique field, pre-check collisions
@@ -103,7 +103,7 @@ public final class DataType {
 
                 Map<Object, DataRecord> idx = uniqueIndex.get(field);
                 DataRecord other = idx.get(newVal);
-                if (other != null && other != r) throw new JsonicException("Duplicate value for unique field: " + f.name());
+                if (other != null && other != r) throw new JsonicException(com.saghar.jsonicdb.util.Errors.duplicateUnique(f.name()));
             }
         }
 
@@ -122,7 +122,7 @@ public final class DataType {
                     // rollback to indexes only (values already changed); simplest: throw and leave state inconsistent is bad.
                     // Instead: re-add indexes with current values before throwing.
                     addToIndexes(r);
-                    throw new JsonicException("Missing required field after update: " + f.name());
+                    throw new JsonicException(com.saghar.jsonicdb.util.Errors.missingRequired(f.name()));
                 }
             }
             addToIndexes(r);

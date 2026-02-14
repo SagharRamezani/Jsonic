@@ -19,7 +19,7 @@ public final class DeleteCommand implements Command {
     @Override
     public String execute(Database db) {
         DataType dt = db.getType(typeName);
-        if (dt == null) throw new JsonicException("Data type not found: " + typeName);
+        if (dt == null) throw new JsonicException(com.saghar.jsonicdb.util.Errors.typeNotFound(typeName));
 
         Filter filter = (filterExpr == null) ? Filter.alwaysTrue() : new FilterParser().parse(filterExpr);
         int deleted = dt.deleteWhere(r -> filter.test(dt, r));

@@ -35,9 +35,9 @@ public final class ConsoleRunner {
                     String result = cmd.execute(db);
                     if (result != null && !result.isBlank()) out.println(result);
                 } catch (JsonicException ex) {
-                    err.println("Error: " + ex.getMessage());
+                    err.println("Error" + " " + ex.getMessage());
                 } catch (Exception ex) {
-                    err.println("Error: unexpected failure (" + ex.getClass().getSimpleName() + ")");
+                    err.println("Error" + " " + "unexpected failure (" + ex.getClass().getSimpleName() + ")");
                 }
             }
         }

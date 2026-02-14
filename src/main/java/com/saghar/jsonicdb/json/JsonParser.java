@@ -20,13 +20,13 @@ public final class JsonParser {
         JsonParser p = new JsonParser(input);
         JsonValue v = p.parseValue();
         p.skipWs();
-        if (!p.eof()) throw new JsonicException("Invalid JSON: trailing characters");
+        if (!p.eof()) throw new JsonicException(com.saghar.jsonicdb.util.Errors.invalidJson());
         return v;
     }
 
     private JsonValue parseValue() {
         skipWs();
-        if (eof()) throw new JsonicException("Invalid JSON: unexpected end");
+        if (eof()) throw new JsonicException(com.saghar.jsonicdb.util.Errors.invalidJson());
         char c = peek();
         if (c == '{') return parseObject();
         if (c == '[') return parseArray();

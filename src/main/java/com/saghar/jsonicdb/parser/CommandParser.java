@@ -19,7 +19,7 @@ public final class CommandParser {
             case "search" -> parseSearch(rest);
             case "update" -> parseUpdate(rest);
             case "delete" -> parseDelete(rest);
-            default -> throw new JsonicException("Invalid command: " + action);
+            default -> throw new JsonicException(com.saghar.jsonicdb.util.Errors.invalidCommand(action));
         };
     }
 
@@ -79,7 +79,7 @@ public final class CommandParser {
         try {
             return JsonParser.parse(payload);
         } catch (JsonicException ex) {
-            throw new JsonicException("Invalid JSON format");
+            throw new JsonicException(com.saghar.jsonicdb.util.Errors.invalidJsonFormat());
         }
     }
 
@@ -94,11 +94,11 @@ public final class CommandParser {
     private static String extractOptionalParenExpr(String s) {
         String t = s.trim();
         if (t.isEmpty()) return null;
-        if (!t.startsWith("(")) throw new JsonicException("Invalid filter syntax: expected parentheses");
+        if (!t.startsWith("(")) throw new JsonicException(com.saghar.jsonicdb.util.Errors.invalidFilter(""));
         int end = findMatchingParen(t, 0);
         String inside = t.substring(1, end).trim();
         String after = t.substring(end + 1).trim();
-        if (!after.isEmpty()) throw new JsonicException("Invalid filter syntax: trailing characters");
+        if (!after.isEmpty()) throw new JsonicException(com.saghar.jsonicdb.util.Errors.invalidFilter(""));
         return inside;
     }
 
@@ -112,6 +112,6 @@ public final class CommandParser {
                 if (depth == 0) return i;
             }
         }
-        throw new JsonicException("Invalid filter syntax: unbalanced parentheses");
+        throw new JsonicException(com.saghar.jsonicdb.util.Errors.invalidFilter(""));
     }
 }

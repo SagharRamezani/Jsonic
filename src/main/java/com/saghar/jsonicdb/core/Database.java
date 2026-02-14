@@ -14,7 +14,7 @@ public final class Database {
 
     public DataType createType(String name) {
         String key = canon(name);
-        if (types.containsKey(key)) throw new JsonicException("Data type already exists: " + name);
+        if (types.containsKey(key)) throw new JsonicException(com.saghar.jsonicdb.util.Errors.typeAlreadyExists(name));
         DataType dt = new DataType(name);
         types.put(key, dt);
         return dt;

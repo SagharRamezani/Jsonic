@@ -18,13 +18,14 @@ public final class CreateTypeCommand implements Command {
 
     @Override
     public String execute(Database db) {
-        if (!(payload instanceof JsonObject obj)) throw new JsonicException("Invalid create syntax: expected JSON object");
+        if (!(payload instanceof JsonObject obj)) throw new JsonicException(com.saghar.jsonicdb.util.Errors.invalidSyntax("create"));
+        if (obj.entries().isEmpty()) throw new JsonicException(com.saghar.jsonicdb.util.Errors.fieldsEmpty());
         DataType dt = db.createType(typeName);
 
         for (Map.Entry<String, JsonValue> e : obj.entries().entrySet()) {
             String fieldName = e.getKey();
             if (!(e.getValue() instanceof JsonObject props)) {
-                throw new JsonicException("Invalid field definition for: " + fieldName);
+                throw new JsonicException(com.saghar.jsonicdb.util.Errors.invalidCommandFormat());
             }
             String typeSpec = readString(props, "type", "string");
             boolean required = readBoolean(props, "required", false);

@@ -23,7 +23,7 @@ public enum ValueType {
             case "bool", "boolean" -> BOOL;
             case "time" -> TIME;
             case "arr_string", "list_string", "string_list" -> STRING_LIST;
-            default -> throw new JsonicException("Invalid type: " + spec);
+            default -> throw new JsonicException(com.saghar.jsonicdb.util.Errors.invalidTypeSpec(spec));
         };
     }
 
