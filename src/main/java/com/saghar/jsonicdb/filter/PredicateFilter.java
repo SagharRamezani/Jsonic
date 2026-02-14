@@ -1,6 +1,9 @@
 package com.saghar.jsonicdb.filter;
 
-import com.saghar.jsonicdb.core.*;
+import com.saghar.jsonicdb.core.DataRecord;
+import com.saghar.jsonicdb.core.DataType;
+import com.saghar.jsonicdb.core.FieldDef;
+import com.saghar.jsonicdb.core.ValueType;
 import com.saghar.jsonicdb.filter.FilterParser.Token;
 import com.saghar.jsonicdb.util.JsonicException;
 
@@ -28,7 +31,8 @@ final class PredicateFilter implements Filter {
             if (!left.isField()) throw new JsonicException("include expects a field on the left");
             FieldDef f = type.field(left.asField());
             if (f == null) throw new JsonicException("Unknown field in filter: " + left.asField());
-            if (f.type() != ValueType.STRING_LIST) throw new JsonicException("include is only supported for string lists");
+            if (f.type() != ValueType.STRING_LIST)
+                throw new JsonicException("include is only supported for string lists");
             Object lv = record.get(left.asField().toLowerCase());
             if (!(lv instanceof List<?> list)) return false;
             String needle = right.asStringLiteral();
@@ -126,15 +130,26 @@ final class PredicateFilter implements Filter {
             // IDENT is likely a field, but we may later downgrade to literal if field doesn't exist
             boolean isField = (t.type().name().equals("IDENT"));
             if (t.type().name().equals("STRING")) return new Operand(false, "\"" + t.text() + "\"");
-            if (t.type().name().equals("BOOL") || t.type().name().equals("NUMBER") || t.type().name().equals("BARE")) return new Operand(false, t.text());
+            if (t.type().name().equals("BOOL") || t.type().name().equals("NUMBER") || t.type().name().equals("BARE"))
+                return new Operand(false, t.text());
             return new Operand(isField, t.text());
         }
 
-        static Operand literal(String raw) { return new Operand(false, raw); }
+        static Operand literal(String raw) {
+            return new Operand(false, raw);
+        }
 
-        boolean isField() { return field; }
-        String asField() { return raw; }
-        String raw() { return raw; }
+        boolean isField() {
+            return field;
+        }
+
+        String asField() {
+            return raw;
+        }
+
+        String raw() {
+            return raw;
+        }
 
         String asStringLiteral() {
             String t = raw.trim();
@@ -144,13 +159,19 @@ final class PredicateFilter implements Filter {
         }
 
         int asIntLiteral() {
-            try { return Integer.parseInt(stripQuotes(raw)); }
-            catch (NumberFormatException ex) { throw new JsonicException("Invalid int literal in filter: " + raw); }
+            try {
+                return Integer.parseInt(stripQuotes(raw));
+            } catch (NumberFormatException ex) {
+                throw new JsonicException("Invalid int literal in filter: " + raw);
+            }
         }
 
         double asDoubleLiteral() {
-            try { return Double.parseDouble(stripQuotes(raw)); }
-            catch (NumberFormatException ex) { throw new JsonicException("Invalid double literal in filter: " + raw); }
+            try {
+                return Double.parseDouble(stripQuotes(raw));
+            } catch (NumberFormatException ex) {
+                throw new JsonicException("Invalid double literal in filter: " + raw);
+            }
         }
 
         boolean asBoolLiteral() {
@@ -161,20 +182,32 @@ final class PredicateFilter implements Filter {
         }
 
         LocalDateTime asTimeLiteral() {
-            try { return LocalDateTime.parse(stripQuotes(raw)); }
-            catch (Exception ex) { throw new JsonicException("Invalid time literal in filter: " + raw); }
+            try {
+                return LocalDateTime.parse(stripQuotes(raw));
+            } catch (Exception ex) {
+                throw new JsonicException("Invalid time literal in filter: " + raw);
+            }
         }
 
         Object asBestEffortLiteral() {
             String t = stripQuotes(raw);
             if (t.equalsIgnoreCase("true") || t.equalsIgnoreCase("false")) return Boolean.parseBoolean(t);
             if (t.matches("-?\\d+")) {
-                try { return Integer.parseInt(t); } catch (Exception ignored) {}
+                try {
+                    return Integer.parseInt(t);
+                } catch (Exception ignored) {
+                }
             }
             if (t.matches("-?\\d+(\\.\\d+)?")) {
-                try { return Double.parseDouble(t); } catch (Exception ignored) {}
+                try {
+                    return Double.parseDouble(t);
+                } catch (Exception ignored) {
+                }
             }
-            try { return LocalDateTime.parse(t); } catch (Exception ignored) {}
+            try {
+                return LocalDateTime.parse(t);
+            } catch (Exception ignored) {
+            }
             return t;
         }
 

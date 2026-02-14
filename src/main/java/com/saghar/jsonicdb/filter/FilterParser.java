@@ -61,9 +61,20 @@ public final class FilterParser {
         int i = 0;
         while (i < s.length()) {
             char c = s.charAt(i);
-            if (Character.isWhitespace(c)) { i++; continue; }
-            if (c == '(') { out.add(new Token(TokenType.LPAREN, "(")); i++; continue; }
-            if (c == ')') { out.add(new Token(TokenType.RPAREN, ")")); i++; continue; }
+            if (Character.isWhitespace(c)) {
+                i++;
+                continue;
+            }
+            if (c == '(') {
+                out.add(new Token(TokenType.LPAREN, "("));
+                i++;
+                continue;
+            }
+            if (c == ')') {
+                out.add(new Token(TokenType.RPAREN, ")"));
+                i++;
+                continue;
+            }
 
             // operators
             if (c == '<' || c == '>' || c == '=' || c == '!') {
@@ -129,20 +140,29 @@ public final class FilterParser {
 
     // --- parsing helpers ---
     private boolean match(TokenType t) {
-        if (peek().type == t) { pos++; return true; }
+        if (peek().type == t) {
+            pos++;
+            return true;
+        }
         return false;
     }
 
     private boolean matchKeyword(String kw) {
         Token p = peek();
-        if (p.type == TokenType.KEYWORD && p.text.equalsIgnoreCase(kw)) { pos++; return true; }
+        if (p.type == TokenType.KEYWORD && p.text.equalsIgnoreCase(kw)) {
+            pos++;
+            return true;
+        }
         return false;
     }
 
     private Token expect(TokenType... types) {
         Token p = peek();
         for (TokenType t : types) {
-            if (p.type == t) { pos++; return p; }
+            if (p.type == t) {
+                pos++;
+                return p;
+            }
         }
         throw new JsonicException("Invalid filter near: " + p.text);
     }
@@ -153,9 +173,12 @@ public final class FilterParser {
         pos++;
     }
 
-    private Token peek() { return tokens.get(pos); }
+    private Token peek() {
+        return tokens.get(pos);
+    }
 
-    enum TokenType { LPAREN, RPAREN, OP, KEYWORD, IDENT, STRING, NUMBER, BOOL, BARE, EOF }
+    enum TokenType {LPAREN, RPAREN, OP, KEYWORD, IDENT, STRING, NUMBER, BOOL, BARE, EOF}
 
-    record Token(TokenType type, String text) {}
+    record Token(TokenType type, String text) {
+    }
 }

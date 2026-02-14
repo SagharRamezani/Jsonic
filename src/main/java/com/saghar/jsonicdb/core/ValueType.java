@@ -46,12 +46,18 @@ public enum ValueType {
                 throw new JsonicException("Invalid string literal: " + raw);
             }
             case INT -> {
-                try { yield Integer.parseInt(t); }
-                catch (NumberFormatException e) { throw new JsonicException("Invalid int literal: " + raw); }
+                try {
+                    yield Integer.parseInt(t);
+                } catch (NumberFormatException e) {
+                    throw new JsonicException("Invalid int literal: " + raw);
+                }
             }
             case DOUBLE -> {
-                try { yield Double.parseDouble(t); }
-                catch (NumberFormatException e) { throw new JsonicException("Invalid double literal: " + raw); }
+                try {
+                    yield Double.parseDouble(t);
+                } catch (NumberFormatException e) {
+                    throw new JsonicException("Invalid double literal: " + raw);
+                }
             }
             case BOOL -> {
                 if (t.equalsIgnoreCase("true")) yield true;
@@ -61,8 +67,11 @@ public enum ValueType {
             case TIME -> {
                 // Accept either quoted or bare ISO-8601 LocalDateTime (e.g. 2024-01-01T12:30:00)
                 String v = (t.startsWith("\"") && t.endsWith("\"") && t.length() >= 2) ? t.substring(1, t.length() - 1) : t;
-                try { yield LocalDateTime.parse(v); }
-                catch (DateTimeParseException e) { throw new JsonicException("Invalid time literal. Use ISO_LOCAL_DATE_TIME like 2024-01-01T12:30:00"); }
+                try {
+                    yield LocalDateTime.parse(v);
+                } catch (DateTimeParseException e) {
+                    throw new JsonicException("Invalid time literal. Use ISO_LOCAL_DATE_TIME like 2024-01-01T12:30:00");
+                }
             }
             case STRING_LIST -> throw new JsonicException("STRING_LIST cannot be parsed from a single literal");
         };

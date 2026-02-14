@@ -15,5 +15,7 @@ public final class JsonObject implements JsonValue {
         return Collections.unmodifiableMap(map);
     }
 
-    public JsonValue get(String key) { return map.get(key); }
+    public JsonValue get(String key) {
+        return map.get(key);
+    }
 }

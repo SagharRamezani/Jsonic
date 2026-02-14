@@ -64,8 +64,9 @@ public final class JsonParser {
         StringBuilder sb = new StringBuilder();
         while (!eof()) {
             char c = peek();
-            if (Character.isLetterOrDigit(c) || c == '_' ) {
-                sb.append(c); i++;
+            if (Character.isLetterOrDigit(c) || c == '_') {
+                sb.append(c);
+                i++;
             } else break;
         }
         if (sb.isEmpty()) throw new JsonicException("Invalid JSON object key");
@@ -123,13 +124,22 @@ public final class JsonParser {
     }
 
     private JsonValue parseBoolean() {
-        if (matchAhead("true")) { i += 4; return new JsonBoolean(true); }
-        if (matchAhead("false")) { i += 5; return new JsonBoolean(false); }
+        if (matchAhead("true")) {
+            i += 4;
+            return new JsonBoolean(true);
+        }
+        if (matchAhead("false")) {
+            i += 5;
+            return new JsonBoolean(false);
+        }
         throw new JsonicException("Invalid JSON boolean literal");
     }
 
     private JsonValue parseNull() {
-        if (matchAhead("null")) { i += 4; return JsonNull.INSTANCE; }
+        if (matchAhead("null")) {
+            i += 4;
+            return JsonNull.INSTANCE;
+        }
         throw new JsonicException("Invalid JSON null literal");
     }
 
@@ -153,9 +163,17 @@ public final class JsonParser {
         while (!eof() && Character.isWhitespace(peek())) i++;
     }
 
-    private boolean eof() { return i >= s.length(); }
-    private char peek() { return s.charAt(i); }
-    private char next() { return s.charAt(i++); }
+    private boolean eof() {
+        return i >= s.length();
+    }
+
+    private char peek() {
+        return s.charAt(i);
+    }
+
+    private char next() {
+        return s.charAt(i++);
+    }
 
     private void expect(char c) {
         skipWs();
@@ -165,7 +183,10 @@ public final class JsonParser {
 
     private boolean tryConsume(char c) {
         skipWs();
-        if (!eof() && s.charAt(i) == c) { i++; return true; }
+        if (!eof() && s.charAt(i) == c) {
+            i++;
+            return true;
+        }
         return false;
     }
 

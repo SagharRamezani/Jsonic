@@ -11,7 +11,8 @@ import java.util.NoSuchElementException;
 import java.util.Scanner;
 
 public final class ConsoleRunner {
-    private ConsoleRunner() {}
+    private ConsoleRunner() {
+    }
 
     public static void run(InputStream in, PrintStream out, PrintStream err, boolean prompt) {
         Database db = new Database();

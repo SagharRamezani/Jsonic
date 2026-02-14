@@ -16,8 +16,19 @@ public final class FieldDef {
         this.unique = unique;
     }
 
-    public String name() { return name; }
-    public ValueType type() { return type; }
-    public boolean required() { return required; }
-    public boolean unique() { return unique; }
+    public String name() {
+        return name;
+    }
+
+    public ValueType type() {
+        return type;
+    }
+
+    public boolean required() {
+        return required;
+    }
+
+    public boolean unique() {
+        return unique;
+    }
 }

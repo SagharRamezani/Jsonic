@@ -16,19 +16,26 @@ public final class DataType {
         this.name = name;
     }
 
-    public String name() { return name; }
+    public String name() {
+        return name;
+    }
 
-    public Collection<FieldDef> fields() { return Collections.unmodifiableCollection(fields.values()); }
+    public Collection<FieldDef> fields() {
+        return Collections.unmodifiableCollection(fields.values());
+    }
 
     public FieldDef field(String name) {
         return fields.get(canon(name));
     }
 
-    public List<DataRecord> records() { return records; }
+    public List<DataRecord> records() {
+        return records;
+    }
 
     public void addField(FieldDef def) {
         String key = canon(def.name());
-        if (fields.containsKey(key)) throw new JsonicException(com.saghar.jsonicdb.util.Errors.duplicateField(def.name()));
+        if (fields.containsKey(key))
+            throw new JsonicException(com.saghar.jsonicdb.util.Errors.duplicateField(def.name()));
         fields.put(key, def);
         if (def.unique()) uniqueIndex.put(key, new HashMap<>());
     }
@@ -57,7 +64,8 @@ public final class DataType {
             String k = canon(f.name());
             Object v = r.get(k);
             Map<Object, DataRecord> idx = uniqueIndex.get(k);
-            if (idx.containsKey(v)) throw new JsonicException(com.saghar.jsonicdb.util.Errors.duplicateUnique(f.name()));
+            if (idx.containsKey(v))
+                throw new JsonicException(com.saghar.jsonicdb.util.Errors.duplicateUnique(f.name()));
         }
 
         // commit: add to records + index
@@ -86,7 +94,8 @@ public final class DataType {
     public int updateWhere(java.util.function.Predicate<DataRecord> predicate, Map<String, Object> updates) {
         // pre-validate: unknown fields
         for (String k : updates.keySet()) {
-            if (!fields.containsKey(canon(k))) throw new JsonicException(com.saghar.jsonicdb.util.Errors.fieldNotFound(k));
+            if (!fields.containsKey(canon(k)))
+                throw new JsonicException(com.saghar.jsonicdb.util.Errors.fieldNotFound(k));
         }
 
         // if updates touch a unique field, pre-check collisions
@@ -103,7 +112,8 @@ public final class DataType {
 
                 Map<Object, DataRecord> idx = uniqueIndex.get(field);
                 DataRecord other = idx.get(newVal);
-                if (other != null && other != r) throw new JsonicException(com.saghar.jsonicdb.util.Errors.duplicateUnique(f.name()));
+                if (other != null && other != r)
+                    throw new JsonicException(com.saghar.jsonicdb.util.Errors.duplicateUnique(f.name()));
             }
         }
 
@@ -169,7 +179,9 @@ public final class DataType {
         }
     }
 
-    private static String canon(String s) { return s.trim().toLowerCase(); }
+    private static String canon(String s) {
+        return s.trim().toLowerCase();
+    }
 
     private static String pad(String s, int w) {
         if (s == null) s = "null";

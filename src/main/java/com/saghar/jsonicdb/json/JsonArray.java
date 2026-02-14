@@ -10,5 +10,7 @@ public final class JsonArray implements JsonValue {
         this.items = List.copyOf(items);
     }
 
-    public List<JsonValue> items() { return Collections.unmodifiableList(items); }
+    public List<JsonValue> items() {
+        return Collections.unmodifiableList(items);
+    }
 }

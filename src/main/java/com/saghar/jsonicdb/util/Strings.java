@@ -1,7 +1,8 @@
 package com.saghar.jsonicdb.util;
 
 public final class Strings {
-    private Strings() {}
+    private Strings() {
+    }
 
     public static String unquote(String s) {
         String t = s.trim();

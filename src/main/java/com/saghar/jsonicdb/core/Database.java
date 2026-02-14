@@ -20,5 +20,7 @@ public final class Database {
         return dt;
     }
 
-    private static String canon(String s) { return s.trim().toLowerCase(); }
+    private static String canon(String s) {
+        return s.trim().toLowerCase();
+    }
 }
