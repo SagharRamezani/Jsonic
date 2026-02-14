@@ -1,6 +1,9 @@
 package com.saghar.jsonicdb.parser.commands;
 
-import com.saghar.jsonicdb.core.*;
+import com.saghar.jsonicdb.core.DataType;
+import com.saghar.jsonicdb.core.Database;
+import com.saghar.jsonicdb.core.FieldDef;
+import com.saghar.jsonicdb.core.ValueType;
 import com.saghar.jsonicdb.json.*;
 import com.saghar.jsonicdb.parser.Command;
 import com.saghar.jsonicdb.util.JsonicException;
@@ -18,7 +21,8 @@ public final class CreateTypeCommand implements Command {
 
     @Override
     public String execute(Database db) {
-        if (!(payload instanceof JsonObject obj)) throw new JsonicException(com.saghar.jsonicdb.util.Errors.invalidSyntax("create"));
+        if (!(payload instanceof JsonObject obj))
+            throw new JsonicException(com.saghar.jsonicdb.util.Errors.invalidSyntax("create"));
         if (obj.entries().isEmpty()) throw new JsonicException(com.saghar.jsonicdb.util.Errors.fieldsEmpty());
         DataType dt = db.createType(typeName);
 

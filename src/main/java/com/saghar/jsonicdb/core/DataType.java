@@ -43,19 +43,27 @@ public final class DataType {
     public DataRecord insert(Map<String, Object> provided) {
         DataRecord r = new DataRecord();
 
-        // materialize defaults
-        for (FieldDef f : fields.values()) {
-            Object v = provided.get(canon(f.name()));
-            if (v == null) v = f.type().defaultValue();
-            r.put(canon(f.name()), v);
+        // Canonicalize provided keys once (required fields must be explicitly provided)
+        Set<String> providedKeys = new HashSet<>();
+        for (String k : provided.keySet()) {
+            if (k != null) providedKeys.add(canon(k));
         }
 
-        // required check (after defaults, only missing if field exists but provided null explicitly)
+        // required check: required fields must appear in input (even if they have a default)
         for (FieldDef f : fields.values()) {
-            if (f.required()) {
-                Object v = r.get(canon(f.name()));
-                if (v == null) throw new JsonicException(com.saghar.jsonicdb.util.Errors.missingRequired(f.name()));
+            if (!f.required()) continue;
+            String k = canon(f.name());
+            if (!providedKeys.contains(k) || provided.get(k) == null) {
+                throw new JsonicException(com.saghar.jsonicdb.util.Errors.missingRequired(f.name()));
             }
+        }
+
+        // materialize defaults (only for non-required fields when missing/null)
+        for (FieldDef f : fields.values()) {
+            String k = canon(f.name());
+            Object v = provided.get(k);
+            if (v == null && !f.required()) v = f.type().defaultValue();
+            r.put(k, v);
         }
 
         // unique check

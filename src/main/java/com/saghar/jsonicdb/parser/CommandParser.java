@@ -64,9 +64,10 @@ public final class CommandParser {
         String remaining = afterType;
 
         if (remaining.startsWith("(")) {
-            filter = extractOptionalParenExpr(remaining);
-            // remove the leading "(...)" from remaining
+            // In update, the filter may be followed by a JSON object, so we only
+            // extract the *leading* parenthesized expression.
             int end = findMatchingParen(remaining, 0);
+            filter = remaining.substring(1, end).trim();
             remaining = remaining.substring(end + 1).trim();
         }
 

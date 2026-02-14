@@ -1,8 +1,8 @@
 package com.saghar.jsonicdb.parser.commands;
 
+import com.saghar.jsonicdb.core.DataRecord;
 import com.saghar.jsonicdb.core.DataType;
 import com.saghar.jsonicdb.core.Database;
-import com.saghar.jsonicdb.core.DataRecord;
 import com.saghar.jsonicdb.filter.Filter;
 import com.saghar.jsonicdb.filter.FilterParser;
 import com.saghar.jsonicdb.parser.Command;
