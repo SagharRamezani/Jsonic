@@ -121,29 +121,32 @@ This keeps query evaluation clean and extensible.
 
 ```mermaid
 flowchart TD
-  A[User Input (CLI)] --> B[CommandParser]
-  B -->|create| C[CreateCommand]
-  B -->|insert| D[InsertCommand]
-  B -->|search| E[SearchCommand]
-  B -->|update| F[UpdateCommand]
-  B -->|delete| G[DeleteCommand]
+  A["User Input (CLI)"] --> B["CommandParser"]
 
-  C --> H[(Database)]
+  B -->|create| C["CreateCommand"]
+  B -->|insert| D["InsertCommand"]
+  B -->|search| E["SearchCommand"]
+  B -->|update| F["UpdateCommand"]
+  B -->|delete| G["DeleteCommand"]
+
+  C --> H["Database"]
   D --> H
   E --> H
   F --> H
   G --> H
 
-  D --> J[JsonParser: parse row]
-  C --> K[JsonParser: parse schema]
-  F --> L[JsonParser: parse patch]
-  E --> M[FilterParser → AST]
-  F --> M
-  M --> N[Evaluate filter on instances]
+  C --> K["JsonParser: parse schema"]
+  D --> J["JsonParser: parse row"]
+  F --> L["JsonParser: parse patch"]
 
-  H --> O[Result Formatter]
+  E --> M["FilterParser -> AST"]
+  F --> M
+  M --> N["Evaluate filter on instances"]
+
+  H --> O["Result Formatter"]
   N --> O
-  O --> P[Output]
+  O --> P["Output"]
+
 ```
 
 ---
